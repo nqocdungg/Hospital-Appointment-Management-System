@@ -33,3 +33,7 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Ignore generated Prisma client
+generated/
+prisma/generated/

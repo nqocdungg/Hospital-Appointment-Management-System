@@ -1,0 +1,243 @@
+
+.auth-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.auth-left {
+  width: 57%;
+  height: 100%;
+  background: url("/image/login-page.jpg") center/cover no-repeat;
+}
+
+.auth-right {
+  width: 43%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;        
+  justify-content: center;
+  background-color: rgb(245, 245, 240);
+  color: black;
+  position: relative;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 25px;      
+}
+
+.auth-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e3a8a;          
+  margin-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+
+.auth-header p {
+  font-size: 14px;
+  color: #6b7280;      
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.auth-box {
+  background-color: white;
+  width: 450px;
+  padding: 50px 50px;
+  border-radius: 12px;
+  border: 1px solid rgb(203, 203, 202);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;         
+}
+
+.auth-box form {
+  width: 100%;
+  box-sizing: border-box;        
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  max-width: 100%;
+  height: 48px;
+  padding: 10px 10px;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  color: #111827;
+  transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;        
+}
+
+.switch-link {
+  color: #2563eb;           
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.switch-link:hover {
+  color: #1e3a8a;  
+  text-decoration: underline;          
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%
+}
+
+.form-group input::placeholder {
+  color: #9ca3af; 
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #9ca3af; 
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #2563eb;         
+  background-color: #fff;          
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); 
+  outline: none;
+}
+.log-in-text {
+  margin-top: 0px;
+}
+.gender-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.gender-options {
+  display: flex;                
+  gap: 24px;                   
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.gender-options label {
+  display: flex;
+  align-items: center;          
+  gap: 2px;                     
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.gender-options input[type="radio"] {
+  accent-color: #2563eb;    
+  cursor: pointer;
+}
+
+.auth-btn {
+  width: 100%;                   
+  height: 42px;  
+  background-color: #2563eb;        
+  color: white;
+  border: none;
+  border-radius: 8px;            
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25); 
+  margin-top: 10px;
+}
+
+.auth-btn:hover {
+  background-color: #1e40af;       
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35); 
+  transform: translateY(-2px);      
+}
+
+.auth-btn:active {
+  transform: translateY(0);      
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+.divider-inside {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #e5e7eb; 
+  opacity: 0.8;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+}
+
+.header-link {
+  display: flex;
+  align-items: center; 
+  gap: 8px;
+  text-decoration: none; 
+  color: #4b0082;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+
+.menu-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  padding: 4px 0;
+  z-index: 10;
+}
+
+.dropdown-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: #f3f3f3;
+}
+
