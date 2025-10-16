@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int           @id @default(autoincrement())
+  fullname      String        @db.VarChar(50)
+  email         String        @unique @db.VarChar(50)
+  password      String        @db.VarChar(255)  
+  role          Role          @default(PATIENT)
+  createdAt     DateTime      @default(now())    
+
+  doctorInfo    DoctorInfo?
+  patinetInfo   PatientInfo?    
+}
+
+model PatientInfo {
+  id            Int           @id @default(autoincrement())
+  userId        Int           @unique
+  gender        String?       @db.Char(1) 
+  dob           DateTime?
+  phone         String?       @db.VarChar(12)
+  user          User          @relation(fields: [userId], references: [id])
+  appointment   Appointment[]
+}
+
+model Specialty {
+  id            Int           @id @default(autoincrement())
+  name          String        @db.VarChar(50)
+  description   String?
+  headDoctorId  Int?          @unique
+
+  headDoctor    DoctorInfo?   @relation("HeadDoctor", fields: [headDoctorId], references: [id])
+  doctors       DoctorInfo[]  @relation("SpecialtyDoctors")
+}
+
+model DoctorInfo {
+  id            Int           @id @default(autoincrement())
+  userId        Int           @unique 
+  gender        String?       @db.Char(1) 
+  qualification String?       @db.VarChar(100)
+  fee           Int?
+  specialtyId   Int?
+
+  user          User          @relation(fields: [userId], references: [id])
+  specialty     Specialty?    @relation("SpecialtyDoctors", fields: [specialtyId], references: [id])
+  schedules     WorkSchedule[]
+  headOf        Specialty?    @relation("HeadDoctor")
+}
+
+model Shift {
+  id            Int           @id @default(autoincrement())
+  startTime     DateTime      @db.Time
+  endTime       DateTime      @db.Time
+  period        String        @db.Char(1) // 'S' (Morning), 'C' (Afternoon)
+
+  schedules     WorkSchedule[]
+}
+
+model WorkSchedule {
+  id            Int           @id @default(autoincrement())
+  doctorId      Int           
+  date          DateTime
+  shiftId       Int
+  status        Int           @default(0) //0: Free, 1: Busy, 2: Day off
+
+  doctor        DoctorInfo    @relation(fields: [doctorId], references: [id])
+  shift         Shift         @relation(fields: [shiftId], references: [id])
+  appointment   Appointment?
+}
+
+model Appointment {
+  id            Int           @id @default(autoincrement())
+  patientId     Int
+  scheduleId    Int           @unique
+  status        Int           @default(0) // 0: Booked, 1: Completed, 2: Cancelled, 3: DoctorCancelled, 4: Absent
+  symptom       String?       @db.VarChar(100)
+  request       String?       @db.VarChar(100)
+  note          String?
+
+  patient       PatientInfo   @relation(fields: [patientId], references: [id])
+  schedule      WorkSchedule  @relation(fields: [scheduleId], references: [id])
+  record        MedicalRecord?
+}
+
+model MedicalRecord {
+  appointmentId Int           @id
+  diagnosis     String
+  prescription  String?
+  note          String?
+
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  DOCTOR 
+  PATIENT
+}
