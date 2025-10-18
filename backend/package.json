@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch --env-file=.env ./server.js",
+  "server": "nodemon server.js",
+  "client": "npm start --prefix ../frontend",
+  "dev": "concurrently \"npm run server\" \"npm run client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,6 +23,10 @@
     "prisma": "^6.17.1"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "nodemon": "^3.1.10"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

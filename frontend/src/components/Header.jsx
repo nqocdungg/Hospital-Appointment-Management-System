@@ -7,7 +7,7 @@ export default function Header({ user, onLogout }) {
   return (
     <header className="header">
       <div className = "left-section">
-        <Link to = "/" className = "header-link">
+        <Link to = "/admin/dashboard" className = "header-link">
             <FaHospitalUser size = {30}/>
             <h1 className="Logo">HAMS HOSPITAL</h1>
         </Link>

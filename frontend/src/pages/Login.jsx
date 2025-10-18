@@ -8,8 +8,11 @@ export default function Login() {
     <Authentication
       mode="login"
       onSuccess={() => {
+        const role = localStorage.getItem("role")
         alert("Login successful!")
-        navigate("/dashboard") 
+        if (role == "ADMIN") navigate("/admin/dashboard") 
+        else if (role == "DOCTOR") navigate("/doctor/dashboard")
+        else navigate("/patient/dashboard")
       }}
     />
   )

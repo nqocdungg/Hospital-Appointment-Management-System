@@ -18,11 +18,12 @@ model User {
   fullname      String        @db.VarChar(50)
   email         String        @unique @db.VarChar(50)
   password      String        @db.VarChar(255)  
+  phone         String?       @db.VarChar(12)
   role          Role          @default(PATIENT)
   createdAt     DateTime      @default(now())    
 
   doctorInfo    DoctorInfo?
-  patinetInfo   PatientInfo?    
+  patientInfo   PatientInfo?    
 }
 
 model PatientInfo {
@@ -30,14 +31,13 @@ model PatientInfo {
   userId        Int           @unique
   gender        String?       @db.Char(1) 
   dob           DateTime?
-  phone         String?       @db.VarChar(12)
   user          User          @relation(fields: [userId], references: [id])
   appointment   Appointment[]
 }
 
 model Specialty {
   id            Int           @id @default(autoincrement())
-  name          String        @db.VarChar(50)
+  name          String        @unique @db.VarChar(50)
   description   String?
   headDoctorId  Int?          @unique
 
@@ -47,8 +47,8 @@ model Specialty {
 
 model DoctorInfo {
   id            Int           @id @default(autoincrement())
-  userId        Int           @unique 
-  gender        String?       @db.Char(1) 
+  userId        Int           @unique
+  gender        String?       @db.Char(1)
   qualification String?       @db.VarChar(100)
   fee           Int?
   specialtyId   Int?
@@ -57,7 +57,11 @@ model DoctorInfo {
   specialty     Specialty?    @relation("SpecialtyDoctors", fields: [specialtyId], references: [id])
   schedules     WorkSchedule[]
   headOf        Specialty?    @relation("HeadDoctor")
+
+  @@index([specialtyId])
+  @@index([fee])
 }
+
 
 model Shift {
   id            Int           @id @default(autoincrement())

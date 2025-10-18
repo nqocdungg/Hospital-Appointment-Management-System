@@ -1,47 +1,73 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
-import Header from "./components/Header"
+import AdminDashboard from "./pages/admin/AdminDashboard"
+import DoctorList from "./pages/admin/DoctorList"
+import DoctorForm from "./pages/admin/DoctorForm"
+import PatientList from "./pages/admin/PatientList"
+import PatientForm from "./pages/admin/PatientForm"
+import DepartmentDetail from "./pages/admin/DepartmentDetail"
+import DepartmentForm from "./pages/admin/DepartmentForm"
+import DepartmentList from "./pages/admin/DepartmentList"
 
-// Giả lập user (sau này có thể lấy từ context hoặc localStorage)
-const demoUser = {
-  name: "Ngọc Dung",
-  email: "admin@hospital.vn",
-  role: "admin",
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("token")
+  if (!token) return <Navigate to="/login" />
+  return children
 }
 
-function AdminDashboard() {
-  const handleLogout = () => {
-    alert("Đăng xuất thành công!")
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Header user={demoUser} onLogout={handleLogout} />
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-blue-900 mb-3">
-          Admin Dashboard
-        </h2>
-        <p className="text-gray-700">
-          Đây là trang chủ sau khi đăng nhập của Admin. <br />
-          Header ở trên cùng là component dùng chung cho toàn hệ thống.
-        </p>
-      </div>
-    </div>
-  )
-}
-
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        {/* Auth */}
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        {/* Trang admin dashboard demo */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+        {/* Admin routes */}
+        <Route path="/admin/dashboard" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/doctors"
+          element={
+            <ProtectedRoute>
+              <DoctorList />
+            </ProtectedRoute>
+          }
+        />
+
+<Route
+  path="/admin/doctors/new"
+  element={
+    <ProtectedRoute>
+      <DoctorForm mode="add" />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/doctors/edit/:id"
+  element={
+    <ProtectedRoute>
+      <DoctorForm mode="edit" />
+    </ProtectedRoute>
+  }
+/>
+
+        {/* Default redirect */}
+        <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/admin/patients" element={<PatientList />} />
+        <Route path="/admin/patients/add" element={<PatientForm mode="add" />} />
+        <Route path="/admin/patients/edit/:id" element={<PatientForm mode="edit" />} />
+        <Route path="/admin/departments" element = {<DepartmentList/>}/>
+        <Route path="/admin/departments/new" element = {<DepartmentForm mode = "add"/>}/>
+        <Route path="/admin/departments/edit/:id" element = {<DepartmentList mode="edit"/>}/>
+        <Route path="/admin/departments/:id" element = {<DepartmentDetail />}/>
       </Routes>
     </BrowserRouter>
   )
 }
-
-export default App
