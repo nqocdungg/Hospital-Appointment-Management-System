@@ -1,20 +1,24 @@
 import { useState } from "react"
 import { FaHospitalUser, FaBars, FaBell } from "react-icons/fa"
-import { Link } from 'react-router'
+import { Link } from "react-router-dom"
 
-export default function Header({ user, onLogout }) {
-    const [showMenu, setShowMenu] = useState(false)
+export default function Header({ user, role = "admin", onLogout }) {
+  const [showMenu, setShowMenu] = useState(false)
+  const dashboardPath = role === "doctor" ? "/doctor/dashboard" : "/admin/dashboard"
+
   return (
     <header className="header">
-      <div className = "left-section">
-        <Link to = "/admin/dashboard" className = "header-link">
-            <FaHospitalUser size = {30}/>
-            <h1 className="Logo">HAMS HOSPITAL</h1>
+      <div className="left-section">
+        <Link to={dashboardPath} className="header-link">
+          <FaHospitalUser size={30} />
+          <h1 className="Logo">HAMS HOSPITAL</h1>
         </Link>
       </div>
 
       <div className="right-section">
-        <span className = "welcome-text">Welcome, <strong>{user?.name || "Admin"}</strong></span>
+        <span className="welcome-text">
+          Welcome, <strong>{user?.fullname || (role === "doctor" ? "Doctor" : "Admin")}</strong>
+        </span>
 
         <button className="notification-btn">
           <FaBell size={20} />

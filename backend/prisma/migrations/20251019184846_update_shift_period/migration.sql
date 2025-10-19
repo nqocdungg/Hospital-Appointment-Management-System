@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Shift" ALTER COLUMN "period" SET DATA TYPE CHAR(20);

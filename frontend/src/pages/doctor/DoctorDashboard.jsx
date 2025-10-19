@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboard.jsx
 import { useEffect, useState } from "react"
 import axios from "axios"
 import Layout from "../../layouts/Layout"
@@ -7,26 +6,26 @@ import {
   PieChart, Pie, Cell, Legend
 } from "recharts"
 import { motion } from "framer-motion"
-import { FaUserMd, FaUserInjured, FaCalendarCheck, FaMoneyBillWave } from "react-icons/fa"
+import { FaCalendarCheck, FaUserInjured, FaChartBar, FaClock } from "react-icons/fa"
 
-export default function AdminDashboard() {
+export default function DoctorDashboard() {
   const [overview, setOverview] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const COLORS = ["#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"]
+  const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444", "#a855f7"]
 
-  const user = { fullname: "Admin" } // ✅ hoặc lấy từ localStorage sau này
+  const doctor = JSON.parse(localStorage.getItem("doctor")) || { fullname: "Doctor" }
 
   useEffect(() => {
     async function fetchOverview() {
       const token = localStorage.getItem("token")
       try {
-        const res = await axios.get("http://localhost:5050/api/admin/dashboard", {
+        const res = await axios.get("http://localhost:5050/api/doctor/dashboard", {
           headers: { Authorization: `Bearer ${token}` },
         })
         setOverview(res.data)
       } catch (err) {
-        setError(err.response?.data?.message || "Failed to load data.")
+        setError(err.response?.data?.message || "Failed to load dashboard data.")
       } finally {
         setLoading(false)
       }
@@ -37,32 +36,29 @@ export default function AdminDashboard() {
   if (loading) return <div className="loading">Loading data...</div>
   if (error) return <div className="error">{error}</div>
 
-  const appointmentData = Array.isArray(overview?.appointmentData)
-    ? overview.appointmentData.map(item => ({
-        month: item.month ?? item.Month,
-        appointments: item.appointments ?? item.Appointments,
+  const appointmentTrend = Array.isArray(overview?.appointmentTrend)
+    ? overview.appointmentTrend.map(item => ({
+        date: item.date ?? item.Date,
+        count: item.count ?? item.Count,
       }))
     : []
 
-  const departmentData = Array.isArray(overview?.departmentData)
-    ? overview.departmentData.map(item => ({
-        department: item.department ?? item.Department,
+  const patientStats = Array.isArray(overview?.patientStats)
+    ? overview.patientStats.map(item => ({
+        status: item.status ?? item.Status,
         value: item.value ?? item.Value,
       }))
     : []
 
-  const formatCurrency = (num) =>
-    num?.toLocaleString("vi-VN", { style: "currency", currency: "VND" }) || "₫0"
-
   return (
-    <Layout role="admin" user={user}>
+    <Layout role="doctor" user={doctor}>
       <motion.h2
         className="page-title"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Hospital Overview
+        My Dashboard
       </motion.h2>
 
       <motion.div
@@ -74,34 +70,35 @@ export default function AdminDashboard() {
           visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
         }}
       >
-        <AnimatedCard title="Total Doctors" value={overview.doctors} icon={<FaUserMd />} color="blue" />
-        <AnimatedCard title="Total Patients" value={overview.patients} icon={<FaUserInjured />} color="green" />
-        <AnimatedCard title="Appointments Today" value={overview.appointmentsToday} icon={<FaCalendarCheck />} color="yellow" />
-        <AnimatedCard title="Monthly Revenue" value={formatCurrency(overview.monthlyRevenue)} icon={<FaMoneyBillWave />} color="purple" />
+        <AnimatedCard title="Today's Appointments" value={overview.todayAppointments} icon={<FaCalendarCheck />} color="blue" />
+        <AnimatedCard title="Patients This Week" value={overview.weeklyPatients} icon={<FaUserInjured />} color="green" />
+        <AnimatedCard title="Average Consultation Time" value={`${overview.avgConsultTime || 0} mins`} icon={<FaClock />} color="yellow" />
+        <AnimatedCard title="Pending Reports" value={overview.pendingReports} icon={<FaChartBar />} color="purple" />
       </motion.div>
 
+      {/* Charts */}
       <div className="charts-grid">
-        <ChartBox title="Appointments per Month">
-          {appointmentData.length > 0 ? (
+        <ChartBox title="Appointments in the Last 7 Days">
+          {appointmentTrend.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={appointmentData}>
-                <XAxis dataKey="month" />
+              <BarChart data={appointmentTrend}>
+                <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="appointments" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#22c55e" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <p className="nodata">No appointment data</p>
+            <p className="nodata">No appointment trend data</p>
           )}
         </ChartBox>
 
-        <ChartBox title="Patients by Department">
-          {departmentData.length > 0 ? (
+        <ChartBox title="Patient Status Breakdown">
+          {patientStats.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
-                <Pie data={departmentData} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
-                  {departmentData.map((entry, index) => (
+                <Pie data={patientStats} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
+                  {patientStats.map((entry, index) => (
                     <Cell key={index} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -110,7 +107,7 @@ export default function AdminDashboard() {
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <p className="nodata">No department data</p>
+            <p className="nodata">No patient status data</p>
           )}
         </ChartBox>
       </div>
@@ -118,7 +115,6 @@ export default function AdminDashboard() {
   )
 }
 
-// Subcomponents giữ nguyên
 function AnimatedCard({ title, value, icon, color }) {
   return (
     <motion.div

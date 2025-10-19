@@ -9,10 +9,15 @@ import PatientForm from "./pages/admin/PatientForm"
 import DepartmentDetail from "./pages/admin/DepartmentDetail"
 import DepartmentForm from "./pages/admin/DepartmentForm"
 import DepartmentList from "./pages/admin/DepartmentList"
+import ScheduleList from "./pages/admin/ScheduleList"
+import DoctorDashboard from "./pages/doctor/DoctorDashboard"
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, allowedRole }) {
   const token = localStorage.getItem("token")
-  if (!token) return <Navigate to="/login" />
+  const role = localStorage.getItem("role")
+  if (!token) return <Navigate to="/login" replace />
+  if (allowedRole && role !== allowedRole)
+    return role === "doctor" ? <Navigate to="/doctor/dashboard" replace /> : <Navigate to="/admin/dashboard" replace />
   return children
 }
 
@@ -20,53 +25,23 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Auth */}
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Admin routes */}
-        <Route path="/admin/dashboard" element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/doctors"
-          element={
-            <ProtectedRoute>
-              <DoctorList />
-            </ProtectedRoute>
-          }
-        />
-
-<Route
-  path="/admin/doctors/new"
-  element={
-    <ProtectedRoute>
-      <DoctorForm mode="add" />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/admin/doctors/edit/:id"
-  element={
-    <ProtectedRoute>
-      <DoctorForm mode="edit" />
-    </ProtectedRoute>
-  }
-/>
-
-        {/* Default redirect */}
+        <Route path="/doctor/dashboard" element={<ProtectedRoute allowedRole="doctor"><DoctorDashboard /></ProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute allowedRole="admin"><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/admin/doctors" element={<ProtectedRoute allowedRole="admin"><DoctorList /></ProtectedRoute>} />
+        <Route path="/admin/doctors/new" element={<ProtectedRoute allowedRole="admin"><DoctorForm mode="add" /></ProtectedRoute>} />
+        <Route path="/admin/doctors/edit/:id" element={<ProtectedRoute allowedRole="admin"><DoctorForm mode="edit" /></ProtectedRoute>} />
+        <Route path="/admin/patients" element={<ProtectedRoute allowedRole="admin"><PatientList /></ProtectedRoute>} />
+        <Route path="/admin/patients/add" element={<ProtectedRoute allowedRole="admin"><PatientForm mode="add" /></ProtectedRoute>} />
+        <Route path="/admin/patients/edit/:id" element={<ProtectedRoute allowedRole="admin"><PatientForm mode="edit" /></ProtectedRoute>} />
+        <Route path="/admin/departments" element={<ProtectedRoute allowedRole="admin"><DepartmentList /></ProtectedRoute>} />
+        <Route path="/admin/departments/new" element={<ProtectedRoute allowedRole="admin"><DepartmentForm mode="add" /></ProtectedRoute>} />
+        <Route path="/admin/departments/edit/:id" element={<ProtectedRoute allowedRole="admin"><DepartmentForm mode="edit" /></ProtectedRoute>} />
+        <Route path="/admin/departments/:id" element={<ProtectedRoute allowedRole="admin"><DepartmentDetail /></ProtectedRoute>} />
+        <Route path="/admin/schedules" element={<ProtectedRoute allowedRole="admin"><ScheduleList /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
-          <Route path="/admin/patients" element={<PatientList />} />
-        <Route path="/admin/patients/add" element={<PatientForm mode="add" />} />
-        <Route path="/admin/patients/edit/:id" element={<PatientForm mode="edit" />} />
-        <Route path="/admin/departments" element = {<DepartmentList/>}/>
-        <Route path="/admin/departments/new" element = {<DepartmentForm mode = "add"/>}/>
-        <Route path="/admin/departments/edit/:id" element = {<DepartmentList mode="edit"/>}/>
-        <Route path="/admin/departments/:id" element = {<DepartmentDetail />}/>
       </Routes>
     </BrowserRouter>
   )
