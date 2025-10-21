@@ -1,3 +1,4 @@
+// backend/routes/admin/departmentRoutes.js
 import express from "express"
 import prisma from "../../db.js"
 import authMiddleware from "../../middleware/authMiddleware.js"

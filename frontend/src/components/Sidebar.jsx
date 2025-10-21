@@ -1,4 +1,4 @@
-import {Link, useLocation} from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import {
   FaTachometerAlt,
   FaUserMd,
@@ -7,22 +7,23 @@ import {
   FaCalendarAlt,
   FaClipboardList,
   FaChartBar,
-  FaCog
+  FaCog,
+  FaFileMedical,
+  FaComments
 } from "react-icons/fa"
 
-export default function Sidebar({role="admin"}){
+export default function Sidebar({ role = "admin" }) {
   const location = useLocation()
-  console.log("Current path: ", location.pathname)
 
   const adminMenu = [
-    {label: "Dashboard", icon: <FaTachometerAlt/>, path: "/admin/dashboard"},
-    {label: "Doctor List", icon: <FaUserMd/>, path: "/admin/doctors"},
-    {label: "Patient List", icon: <FaUsers />, path: "/admin/patients" },
-    {label: "Departments", icon: <FaHospitalSymbol />, path: "/admin/departments" },
-    {label: "Schedules", icon: <FaCalendarAlt />, path: "/admin/schedules" },
-    {label: "Appointments", icon: <FaClipboardList />, path: "/admin/appointments" },
-    {label: "Reports", icon: <FaChartBar />, path: "/admin/reports" },
-    {label: "Settings", icon: <FaCog />, path: "/admin/settings" },
+    { label: "Dashboard", icon: <FaTachometerAlt />, path: "/admin/dashboard" },
+    { label: "Doctors", icon: <FaUserMd />, path: "/admin/doctors" },
+    { label: "Patients", icon: <FaUsers />, path: "/admin/patients" },
+    { label: "Departments", icon: <FaHospitalSymbol />, path: "/admin/departments" },
+    { label: "Work Schedules", icon: <FaCalendarAlt />, path: "/admin/schedules" },
+    { label: "Appointments", icon: <FaClipboardList />, path: "/admin/appointments" },
+    { label: "Reports", icon: <FaChartBar />, path: "/admin/reports" },
+    { label: "Settings", icon: <FaCog />, path: "/admin/settings" },
   ]
 
   const doctorMenu = [
@@ -32,23 +33,37 @@ export default function Sidebar({role="admin"}){
     { label: "My Patients", icon: <FaUsers />, path: "/doctor/patients" },
     { label: "Reports", icon: <FaChartBar />, path: "/doctor/reports" },
   ]
-  const menuItems = role === "admin" ? adminMenu : doctorMenu
+
+  const patientMenu = [
+    { label: "Dashboard", icon: <FaTachometerAlt />, path: "/patient/home" },
+    { label: "Book Appointment", icon: <FaCalendarAlt />, path: "/patient/book-appointments" },
+    { label: "My Appointments", icon: <FaClipboardList />, path: "/patient/view-my-appointments" },
+    { label: "Doctors", icon: <FaUserMd />, path: "/patient/doctors" },
+    { label: "Departments", icon: <FaHospitalSymbol />, path: "/patient/departments" },
+    { label: "Medical Records", icon: <FaFileMedical />, path: "/patient/records" },
+    { label: "Support", icon: <FaComments />, path: "/patient/contact" },
+  ]
+
+  const menuItems =
+    role === "admin" ? adminMenu :
+    role === "doctor" ? doctorMenu :
+    patientMenu
 
   return (
     <aside className="sidebar">
       <ul>
-        {menuItems.map((item, index) => (
-          <li key={index} className={location.pathname.startsWith(item.path) ? "active" : ""}>
-            <Link to={item.path}>
-              <span className="icon">{item.icon}</span>
-              <span className="label">{item.label}</span>
-            </Link>
-          </li>
-        ))}
+        {menuItems.map((item, index) => {
+          const isActive = location.pathname.startsWith(item.path)
+          return (
+            <li key={index} className={isActive ? "active" : ""}>
+              <Link to={item.path}>
+                <span className="icon">{item.icon}</span>
+                <span className="label">{item.label}</span>
+              </Link>
+            </li>
+          )
+        })}
       </ul>
     </aside>
   )
-
-
-
 }

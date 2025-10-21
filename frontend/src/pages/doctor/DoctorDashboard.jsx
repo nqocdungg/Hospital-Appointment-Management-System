@@ -1,12 +1,14 @@
+// src/pages/doctor/DoctorDashboard.jsx
 import { useEffect, useState } from "react"
 import axios from "axios"
-import Layout from "../../layouts/Layout"
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from "recharts"
 import { motion } from "framer-motion"
 import { FaCalendarCheck, FaUserInjured, FaChartBar, FaClock } from "react-icons/fa"
+import Header from "../../components/Header"
+import Sidebar from "../../components/Sidebar"
 
 export default function DoctorDashboard() {
   const [overview, setOverview] = useState(null)
@@ -51,67 +53,65 @@ export default function DoctorDashboard() {
     : []
 
   return (
-    <Layout role="doctor" user={doctor}>
-      <motion.h2
-        className="page-title"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        My Dashboard
-      </motion.h2>
+    <>
+      <Header user={doctor} role="doctor" />
+      <div className="dashboard-container">
+        <Sidebar role="doctor" />
+        <main className="dashboard-content">
+          <h2 className="page-title">My Dashboard</h2>
 
-      <motion.div
-        className="overview-grid"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-        }}
-      >
-        <AnimatedCard title="Today's Appointments" value={overview.todayAppointments} icon={<FaCalendarCheck />} color="blue" />
-        <AnimatedCard title="Patients This Week" value={overview.weeklyPatients} icon={<FaUserInjured />} color="green" />
-        <AnimatedCard title="Average Consultation Time" value={`${overview.avgConsultTime || 0} mins`} icon={<FaClock />} color="yellow" />
-        <AnimatedCard title="Pending Reports" value={overview.pendingReports} icon={<FaChartBar />} color="purple" />
-      </motion.div>
+          <motion.div
+            className="overview-grid"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
+            }}
+          >
+            <AnimatedCard title="Today's Appointments" value={overview.todayAppointments} icon={<FaCalendarCheck />} color="blue" />
+            <AnimatedCard title="Patients This Week" value={overview.weeklyPatients} icon={<FaUserInjured />} color="green" />
+            <AnimatedCard title="Average Consultation Time" value={`${overview.avgConsultTime || 0} mins`} icon={<FaClock />} color="yellow" />
+            <AnimatedCard title="Pending Reports" value={overview.pendingReports} icon={<FaChartBar />} color="purple" />
+          </motion.div>
 
-      {/* Charts */}
-      <div className="charts-grid">
-        <ChartBox title="Appointments in the Last 7 Days">
-          {appointmentTrend.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={appointmentTrend}>
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#22c55e" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="nodata">No appointment trend data</p>
-          )}
-        </ChartBox>
+          <div className="charts-grid">
+            <ChartBox title="Appointments in the Last 7 Days">
+              {appointmentTrend.length > 0 ? (
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={appointmentTrend}>
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="nodata">No appointment trend data</p>
+              )}
+            </ChartBox>
 
-        <ChartBox title="Patient Status Breakdown">
-          {patientStats.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie data={patientStats} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
-                  {patientStats.map((entry, index) => (
-                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Legend />
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="nodata">No patient status data</p>
-          )}
-        </ChartBox>
+            <ChartBox title="Patient Status Breakdown">
+              {patientStats.length > 0 ? (
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie data={patientStats} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
+                      {patientStats.map((entry, index) => (
+                        <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Legend />
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <p className="nodata">No patient status data</p>
+              )}
+            </ChartBox>
+          </div>
+        </main>
       </div>
-    </Layout>
+    </>
   )
 }
 

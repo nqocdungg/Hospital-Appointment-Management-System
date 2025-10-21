@@ -1,3 +1,4 @@
+// frontend/src/pages/admin/DoctorList.jsx
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
@@ -19,8 +20,7 @@ export default function DoctorList() {
           headers: { Authorization: `Bearer ${token}` },
         })
         setDoctors(res.data)
-      } catch (err) {
-        console.error(err)
+      } catch {
         setError("Failed to load doctors.")
       } finally {
         setLoading(false)
@@ -35,10 +35,9 @@ export default function DoctorList() {
       await axios.delete(`http://localhost:5050/api/admin/doctors/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      setDoctors(doctors.filter((d) => d.id !== id))
+      setDoctors(doctors.filter(d => d.id !== id))
       alert("Doctor deleted successfully.")
-    } catch (err) {
-      console.error(err)
+    } catch {
       alert("Failed to delete doctor.")
     }
   }
@@ -50,13 +49,15 @@ export default function DoctorList() {
     <>
       <Header />
       <div className="dashboard-container">
-        <Sidebar role="admin" />
+        <Sidebar role="admin" active="doctors" />
         <main className="dashboard-content">
-          <div className="page-header">
+          <div className="page-header" style={{ display: "flex", alignItems: "center" }}>
             <h2 className="page-title">Manage Doctors</h2>
-            <button className="small-add-btn" onClick={() => navigate("/admin/doctors/new")}>
-              + Add
-            </button>
+            <div style={{ marginLeft: "auto" }}>
+              <button className="small-add-btn" onClick={() => navigate("/admin/doctors/new", { state: { mode: "add" } })}>
+                <FaPlus /> Add Doctor
+              </button>
+            </div>
           </div>
 
           <table className="data-table">
@@ -67,13 +68,13 @@ export default function DoctorList() {
                 <th>Email</th>
                 <th>Phone</th>
                 <th>Specialty</th>
-                <th>Fee (VND)</th>
+                <th>Fee</th>
                 <th>Gender</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {doctors.map((doc) => (
+              {doctors.map(doc => (
                 <tr key={doc.id}>
                   <td>{doc.id}</td>
                   <td>{doc.user.fullname}</td>
@@ -83,15 +84,9 @@ export default function DoctorList() {
                   <td>{doc.fee?.toLocaleString() || "—"}</td>
                   <td>{doc.gender === "M" ? "Male" : doc.gender === "F" ? "Female" : "—"}</td>
                   <td>
-                    <button className="btn-view" onClick={() => navigate(`/admin/doctors/${doc.id}`)}>
-                      <FaEye />
-                    </button>
-                    <button className="btn-edit" onClick={() => navigate(`/admin/doctors/edit/${doc.id}`)}>
-                      <FaEdit />
-                    </button>
-                    <button className="btn-delete" onClick={() => handleDelete(doc.id)}>
-                      <FaTrash />
-                    </button>
+                    <button className="btn-view" onClick={() => navigate(`/admin/doctors/edit/${doc.id}`, { state: { mode: "edit" } })}><FaEye /></button>
+                    <button className="btn-edit" onClick={() => navigate(`/admin/doctors/edit/${doc.id}`, { state: { mode: "edit" } })}><FaEdit /></button>
+                    <button className="btn-delete" onClick={() => handleDelete(doc.id)}><FaTrash /></button>
                   </td>
                 </tr>
               ))}

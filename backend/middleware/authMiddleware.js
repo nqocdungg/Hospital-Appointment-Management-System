@@ -7,13 +7,10 @@ function authMiddleware(req, res, next) {
       ? authHeader.split(" ")[1]
       : authHeader
 
-    if (!token) {
-      return res.status(401).json({ message: "No token provided" })
-    }
+    if (!token) return res.status(401).json({ message: "No token provided" })
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.userId = decoded.id
-    req.userRole = decoded.role
+    req.user = { id: decoded.id, role: decoded.role }
     next()
   } catch (err) {
     console.error("JWT verification failed:", err.message)
