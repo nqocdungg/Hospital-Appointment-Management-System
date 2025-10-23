@@ -6,7 +6,6 @@ const prisma = new PrismaClient()
 async function main() {
   console.log("🌱 Seeding hospital system database...")
 
-  // 1️⃣ Admin
   const hashedAdminPass = bcrypt.hashSync("admin123", 8)
   await prisma.user.upsert({
     where: { email: "admin@hospital.vn" },
@@ -21,7 +20,6 @@ async function main() {
   })
   console.log("✅ Admin created")
 
-  // 2️⃣ Specialties
   const specialtiesData = [
     { name: "Cardiology", description: "Heart and blood vessel specialists" },
     { name: "Neurology", description: "Brain and nervous system specialists" },
@@ -40,7 +38,6 @@ async function main() {
   }
   console.log("✅ Specialties created")
 
-  // 3️⃣ Doctors
   const doctorData = [
     {
       fullname: "Dr. Nguyen Chau Minh",
@@ -96,7 +93,6 @@ async function main() {
   }
   console.log("✅ Doctors created")
 
-  // 4️⃣ Patients
   const patientData = [
     {
       fullname: "Nguyen Van A",
@@ -140,33 +136,31 @@ async function main() {
       },
     })
   }
-  console.log("✅ Patients created")
+  console.log("Patients created")
 
-  // 5️⃣ 17 Fixed Shifts
   await prisma.shift.deleteMany()
   const shifts = [
-    { startTime: new Date("1970-01-01T07:00:00Z"), endTime: new Date("1970-01-01T07:30:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T07:30:00Z"), endTime: new Date("1970-01-01T08:00:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T08:00:00Z"), endTime: new Date("1970-01-01T08:30:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T08:30:00Z"), endTime: new Date("1970-01-01T09:00:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T09:00:00Z"), endTime: new Date("1970-01-01T09:30:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T09:30:00Z"), endTime: new Date("1970-01-01T10:00:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T10:00:00Z"), endTime: new Date("1970-01-01T10:30:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T10:30:00Z"), endTime: new Date("1970-01-01T11:00:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T11:00:00Z"), endTime: new Date("1970-01-01T11:30:00Z"), period: "Morning" },
-    { startTime: new Date("1970-01-01T13:00:00Z"), endTime: new Date("1970-01-01T13:30:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T13:30:00Z"), endTime: new Date("1970-01-01T14:00:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T14:00:00Z"), endTime: new Date("1970-01-01T14:30:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T14:30:00Z"), endTime: new Date("1970-01-01T15:00:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T15:00:00Z"), endTime: new Date("1970-01-01T15:30:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T15:30:00Z"), endTime: new Date("1970-01-01T16:00:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T16:00:00Z"), endTime: new Date("1970-01-01T16:30:00Z"), period: "Afternoon" },
-    { startTime: new Date("1970-01-01T16:30:00Z"), endTime: new Date("1970-01-01T17:00:00Z"), period: "Afternoon" },
+    { startTime: "07:00", endTime: "07:30", period: "Morning" },
+    { startTime: "07:30", endTime: "08:00", period: "Morning" },
+    { startTime: "08:00", endTime: "08:30", period: "Morning" },
+    { startTime: "08:30", endTime: "09:00", period: "Morning" },
+    { startTime: "09:00", endTime: "09:30", period: "Morning" },
+    { startTime: "09:30", endTime: "10:00", period: "Morning" },
+    { startTime: "10:00", endTime: "10:30", period: "Morning" },
+    { startTime: "10:30", endTime: "11:00", period: "Morning" },
+    { startTime: "11:00", endTime: "11:30", period: "Morning" },
+    { startTime: "13:00", endTime: "13:30", period: "Afternoon" },
+    { startTime: "13:30", endTime: "14:00", period: "Afternoon" },
+    { startTime: "14:00", endTime: "14:30", period: "Afternoon" },
+    { startTime: "14:30", endTime: "15:00", period: "Afternoon" },
+    { startTime: "15:00", endTime: "15:30", period: "Afternoon" },
+    { startTime: "15:30", endTime: "16:00", period: "Afternoon" },
+    { startTime: "16:00", endTime: "16:30", period: "Afternoon" },
+    { startTime: "16:30", endTime: "17:00", period: "Afternoon" },
   ]
   await prisma.shift.createMany({ data: shifts, skipDuplicates: true })
-  console.log("✅ Seeded 17 fixed shifts (07:00–17:00).")
+  console.log("Seeded 17 fixed shifts (07:00–17:00).")
 
-  // 6️⃣ Sample Work Schedules
   const doctorInfos = await prisma.doctorInfo.findMany()
   const today = new Date()
   await prisma.workSchedule.createMany({

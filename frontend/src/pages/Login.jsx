@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom"
 import Authentication from "../components/Authentication"
 
@@ -14,7 +15,7 @@ export default function Login() {
         if (role === "admin") navigate("/admin/dashboard")
         else if (role === "doctor") navigate("/doctor/dashboard")
         else if (role === "patient") navigate("/patient/home")
-        else navigate("/") // fallback an toàn
+        else navigate("/") 
       }}
     />
   )

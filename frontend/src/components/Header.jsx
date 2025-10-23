@@ -4,7 +4,16 @@ import { Link } from "react-router-dom"
 
 export default function Header({ user, role = "admin", onLogout }) {
   const [showMenu, setShowMenu] = useState(false)
-  const dashboardPath = role === "doctor" ? "/doctor/dashboard" : "/admin/dashboard"
+
+  const dashboardPath =
+    role === "doctor"
+      ? "/doctor/dashboard"
+      : role === "patient"
+      ? "/patient/home"
+      : "/admin/dashboard"
+
+  const roleName =
+    role.charAt(0).toUpperCase() + role.slice(1).toLowerCase()
 
   return (
     <header className="header">
@@ -17,7 +26,7 @@ export default function Header({ user, role = "admin", onLogout }) {
 
       <div className="right-section">
         <span className="welcome-text">
-          Welcome, <strong>{user?.fullname || (role === "doctor" ? "Doctor" : "Admin")}</strong>
+          Welcome, <strong>{roleName}</strong>
         </span>
 
         <button className="notification-btn">

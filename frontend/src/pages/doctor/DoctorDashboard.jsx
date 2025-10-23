@@ -1,4 +1,3 @@
-// src/pages/doctor/DoctorDashboard.jsx
 import { useEffect, useState } from "react"
 import axios from "axios"
 import {
@@ -54,7 +53,7 @@ export default function DoctorDashboard() {
 
   return (
     <>
-      <Header user={doctor} role="doctor" />
+      <Header role="doctor" />
       <div className="dashboard-container">
         <Sidebar role="doctor" />
         <main className="dashboard-content">
@@ -95,13 +94,22 @@ export default function DoctorDashboard() {
               {patientStats.length > 0 ? (
                 <ResponsiveContainer width="100%" height={250}>
                   <PieChart>
-                    <Pie data={patientStats} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
+                    <Pie
+                      data={patientStats}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={90}
+                      dataKey="value"
+                      nameKey="status"
+                      labelLine={false}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                    >
                       {patientStats.map((entry, index) => (
                         <Cell key={index} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Legend />
-                    <Tooltip />
+                    <Legend verticalAlign="bottom" height={36} />
+                    <Tooltip formatter={(value, name, entry) => [`${value}`, entry.payload.status]} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (

@@ -1,3 +1,4 @@
+
 import express from 'express'
 import bcrypt from 'bcryptjs'
 import prisma from '../prismaClient.js'
@@ -26,12 +27,12 @@ router.post('/register', async (req, res) => {
         email,
         password: hashedPassword,
         fullname,
-        phone, // ✅ phone thuộc User, không phải PatientInfo
+        phone,
         role: 'PATIENT',
         patientInfo: {
           create: {
             gender,
-            dob: dob ? new Date(dob) : null, // ✅ chỉ còn gender và dob
+            dob: dob ? new Date(dob) : null, 
           },
         },
       },

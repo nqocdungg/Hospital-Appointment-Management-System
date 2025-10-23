@@ -84,7 +84,8 @@ export default function DoctorForm() {
 
   return (
     <>
-      <Header />
+     <Header role="admin" />
+
       <div className="dashboard-container">
         <Sidebar role="admin" active="doctors" />
         <main className="dashboard-content">

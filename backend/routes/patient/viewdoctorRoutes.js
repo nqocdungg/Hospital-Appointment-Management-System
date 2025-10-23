@@ -5,35 +5,39 @@ import authMiddleware from "../../middleware/authMiddleware.js"
 const router = express.Router()
 router.use(authMiddleware)
 
-router.get("/specialties", async (req, res) => {
-  try {
-    const list = await prisma.specialty.findMany({
-      orderBy: { id: "asc" },
-      select: { id: true, name: true, description: true },
-    })
-    res.json(list)
-  } catch {
-    res.status(500).json({ message: "Failed to load specialties." })
-  }
-})
+const BASE_URL = process.env.BASE_URL || "http://localhost:5050"
 
-router.get("/doctors", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const { specialtyId } = req.query
-    if (!specialtyId) return res.status(400).json({ message: "specialtyId required" })
-    const doctors = await prisma.doctorInfo.findMany({
-      where: { specialtyId: Number(specialtyId) },
-      include: { user: { select: { id: true, fullname: true, email: true } } },
+    const specialties = await prisma.specialty.findMany({
+      include: {
+        doctors: {
+          include: {
+            user: true,
+          },
+        },
+      },
       orderBy: { id: "asc" },
     })
-    const formatted = doctors.map((d) => ({
-      id: d.id,
-      fullname: d.user.fullname,
-      email: d.user.email,
+
+    const formatted = specialties.map((sp) => ({
+      specialtyId: sp.id,
+      specialtyName: sp.name,
+      description: sp.description,
+      doctors: sp.doctors.map((doc) => ({
+        id: doc.userId,
+        fullname: doc.user.fullname,
+        email: doc.user.email,
+        photo: doc.photo ? `${BASE_URL}${doc.photo}` : null,
+        qualification: doc.qualification,
+        fee: doc.fee,
+      })),
     }))
+
     res.json(formatted)
-  } catch {
-    res.status(500).json({ message: "Failed to load doctors." })
+  } catch (err) {
+    console.error("Error fetching doctors by specialty:", err)
+    res.status(500).json({ message: "Failed to fetch doctors by specialty" })
   }
 })
 

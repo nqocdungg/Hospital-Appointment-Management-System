@@ -13,9 +13,9 @@ router.get("/shifts", async (_req, res) => {
       id: s.id,
       period: s.period,
       slot: i + 1,
-      start: toHHmm(s.startTime),
-      end: toHHmm(s.endTime),
-      label: `Shift ${i + 1} (${toHHmm(s.startTime)}-${toHHmm(s.endTime)})`,
+      start: s.startTime,
+      end: s.endTime,
+      label: `Shift ${i + 1} (${s.startTime}-${s.endTime})`,
     }))
     res.json(formatted)
   } catch (err) {
@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
       },
       orderBy: [
         { date: "asc" },
-        { shift: { startTime: sort === "desc" ? "desc" : "asc" } },
+        { shift: { id: sort === "desc" ? "desc" : "asc" } },
       ],
     })
 
@@ -60,8 +60,8 @@ router.get("/", async (req, res) => {
       specialty: s.doctor.specialty?.name ?? "N/A",
       date: s.date.toISOString().split("T")[0],
       shift: s.shift.period,
-      start_time: toHHmm(s.shift.startTime),
-      end_time: toHHmm(s.shift.endTime),
+      start_time: s.shift.startTime,
+      end_time: s.shift.endTime,
       status: s.status,
       statusText: s.status === 0 ? "Free" : s.status === 1 ? "Busy" : "Off",
     }))
@@ -147,10 +147,3 @@ router.delete("/:id", async (req, res) => {
 })
 
 export default router
-
-function toHHmm(d) {
-  const dt = new Date(d)
-  const hh = String(dt.getUTCHours()).padStart(2, "0")
-  const mm = String(dt.getUTCMinutes()).padStart(2, "0")
-  return `${hh}:${mm}`
-}

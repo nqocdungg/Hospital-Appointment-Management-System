@@ -8,10 +8,12 @@ router.use(authMiddleware, requireAdmin)
 
 router.get("/", async (req, res) => {
   try {
-    const doctorCount = await prisma.doctorInfo.count()
-    const patientCount = await prisma.patientInfo.count()
-    const appointmentCount = await prisma.appointment.count()
-    const specialtyCount = await prisma.specialty.count()
+    const [doctorCount, patientCount, specialtyCount, appointmentCount] = await Promise.all([
+      prisma.doctorInfo.count(),
+      prisma.patientInfo.count(),
+      prisma.specialty.count(),
+      prisma.appointment.count()
+    ])
 
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -20,25 +22,33 @@ router.get("/", async (req, res) => {
 
     const appointmentsToday = await prisma.appointment.count({
       where: {
-        schedule: {
-          date: { gte: today, lt: tomorrow },
-        },
-      },
+        schedule: { date: { gte: today, lt: tomorrow } }
+      }
     })
 
-    const monthlyRevenueResult = await prisma.doctorInfo.aggregate({
-      _sum: { fee: true },
-    })
-    const monthlyRevenue = monthlyRevenueResult._sum.fee || 0
+    const now = new Date()
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+
+    const monthlyRevenueResult = await prisma.$queryRaw`
+      SELECT COALESCE(SUM(d."fee"), 0)::int AS total
+      FROM "Appointment" a
+      JOIN "WorkSchedule" w ON a."scheduleId" = w.id
+      JOIN "DoctorInfo" d ON w."doctorId" = d.id
+      WHERE a.status = 1
+        AND w."date" >= ${firstDay}
+        AND w."date" < ${nextMonth};
+    `
+    const monthlyRevenue = Number(monthlyRevenueResult[0]?.total || 0)
 
     const appointmentData = await prisma.$queryRaw`
       SELECT TO_CHAR(w."date", 'Mon') AS month, COUNT(a.id)::int AS appointments
       FROM "Appointment" a
       JOIN "WorkSchedule" w ON a."scheduleId" = w.id
-      GROUP BY month
-      ORDER BY MIN(w."date");
+      WHERE EXTRACT(YEAR FROM w."date") = EXTRACT(YEAR FROM CURRENT_DATE)
+      GROUP BY month, EXTRACT(MONTH FROM w."date")
+      ORDER BY EXTRACT(MONTH FROM w."date");
     `
-
     const departmentData = await prisma.$queryRaw`
       SELECT s.name AS department, COUNT(a.id)::int AS value
       FROM "Specialty" s
@@ -52,15 +62,16 @@ router.get("/", async (req, res) => {
     res.json({
       doctors: doctorCount,
       patients: patientCount,
+      appointments: appointmentCount,
       appointmentsToday,
       monthlyRevenue,
       specialties: specialtyCount,
       appointmentData,
-      departmentData,
+      departmentData
     })
   } catch (err) {
-    console.error("Error fetching dashboard data:", err)
-    res.status(500).json({ message: "Error loading dashboard" })
+    console.error("Error fetching admin dashboard:", err)
+    res.status(500).json({ message: "Error loading dashboard data" })
   }
 })
 

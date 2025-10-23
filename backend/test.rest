@@ -10,3 +10,43 @@ Content-Type: application/json
   "dob": "2000-01-01",
   "phone": "0912345678"
 }
+### Login
+POST http://localhost:5050/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hospital.vn",
+  "password": "admin123"
+}
+
+### Get all specialties
+GET http://localhost:5050/api/admin/departments
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYxMjQxMjQzLCJleHAiOjE3NjEzMjc2NDN9.p27dSKKZ3M2FGsPRcIHq1_JQCKeu_XkpzNt7CUVrV9o
+
+### Get all doctors
+GET http://localhost:5050/api/admin/doctors
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYxMjQxMjQzLCJleHAiOjE3NjEzMjc2NDN9.p27dSKKZ3M2FGsPRcIHq1_JQCKeu_XkpzNt7CUVrV9o
+
+### Get all patients
+GET http://localhost:5050/api/admin/patients
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYxMjQxMjQzLCJleHAiOjE3NjEzMjc2NDN9.p27dSKKZ3M2FGsPRcIHq1_JQCKeu_XkpzNt7CUVrV9o
+
+### Get all schedules
+GET http://localhost:5050/api/admin/schedules
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYxMjQxMjQzLCJleHAiOjE3NjEzMjc2NDN9.p27dSKKZ3M2FGsPRcIHq1_JQCKeu_XkpzNt7CUVrV9o
+
+### Get all appointments
+GET http://localhost:5050/api/admin/appointments
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYxMjQxMjQzLCJleHAiOjE3NjEzMjc2NDN9.p27dSKKZ3M2FGsPRcIHq1_JQCKeu_XkpzNt7CUVrV9o
+
+### Doctor schedules
+GET http://localhost:5050/api/doctor/schedules
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3NjExNTc0NjIsImV4cCI6MTc2MTI0Mzg2Mn0.9oNSRcjQ4eH9xZT-OG-1XapDhDROPVv7w2WIl5qCiAA
+
+### Admin appointments
+GET http://localhost:5050/api/admin/appointments
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzYxMTYxOTc3LCJleHAiOjE3NjEyNDgzNzd9.zsq1hx5L7T-l8bWQTAEavpNYN-Z2NDCrgw1uVVaZ1XE
+
+### View doctor
+GET http://localhost:5050/api/patient/view-doctor
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsInJvbGUiOiJQQVRJRU5UIiwiaWF0IjoxNzYxMTY2NzI3LCJleHAiOjE3NjEyNTMxMjd9.tn6OoiE8ICneVn7XjSsAwrcDpSzypi3Ae3STNdQVdUE

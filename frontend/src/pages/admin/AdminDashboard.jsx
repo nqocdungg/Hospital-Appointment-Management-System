@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboard.jsx
 import { useEffect, useState } from "react"
 import axios from "axios"
 import {
@@ -14,9 +13,17 @@ export default function AdminDashboard() {
   const [overview, setOverview] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const COLORS = ["#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"]
+  const COLORS = [
+    "#3b82f6",
+    "#f43f5e",
+    "#10b981",
+    "#f59e0b",
+    "#8b5cf6",
+    "#ec4899",
+    "#06b6d4",
+    "#84cc16",
+  ]
 
-  // ✅ Fix lỗi parse JSON
   const storedUser = localStorage.getItem("user")
   const user = storedUser && storedUser !== "undefined"
     ? JSON.parse(storedUser)
@@ -59,9 +66,12 @@ export default function AdminDashboard() {
   const formatCurrency = (num) =>
     num?.toLocaleString("vi-VN", { style: "currency", currency: "VND" }) || "₫0"
 
+  const renderLabel = ({ percent, value }) =>
+    `${(percent * 100).toFixed(1)}%` 
+
   return (
     <>
-      <Header user={user} role="admin" />
+      <Header role="admin" />
       <div className="dashboard-container">
         <Sidebar role="admin" />
         <main className="dashboard-content">
@@ -100,15 +110,31 @@ export default function AdminDashboard() {
 
             <ChartBox title="Patients by Department">
               {departmentData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={260}>
                   <PieChart>
-                    <Pie data={departmentData} cx="50%" cy="50%" outerRadius={90} dataKey="value" label>
+                    <Pie
+                      data={departmentData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={90}
+                      innerRadius={40}
+                      dataKey="value"
+                      label={renderLabel}
+                      labelLine={false}
+                    >
                       {departmentData.map((entry, index) => (
                         <Cell key={index} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Legend />
-                    <Tooltip />
+                    <Legend
+                      layout="vertical"
+                      align="right"
+                      verticalAlign="middle"
+                      formatter={(value, entry) => entry.payload.department}
+                    />
+                    <Tooltip
+                      formatter={(value, name, props) => [`${value} appointments`, props.payload.department]}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (

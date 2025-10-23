@@ -13,13 +13,11 @@ import Sidebar from "../../components/Sidebar"
 
 export default function PatientHome() {
   const navigate = useNavigate()
-
   const storedPatient = localStorage.getItem("patient")
   const patient =
     storedPatient && storedPatient !== "undefined"
       ? JSON.parse(storedPatient)
       : null
-
 
   const features = [
     {
@@ -38,36 +36,29 @@ export default function PatientHome() {
       title: "View Doctors",
       subtitle: "Browse Doctor List",
       icon: <FaUserMd />,
-      path: "/patient/view-doctors",
-    },
-    {
-      title: "View Departments",
-      subtitle: "Explore Departments",
-      icon: <FaHospitalSymbol />,
-      path: "/patient/view-departments",
+      path: "/patient/view-doctor",
     },
     {
       title: "Medical Records",
       subtitle: "View My Records",
       icon: <FaFileMedical />,
-      path: "/patient/view-my-records",
+      path: "/patient/medical-records",
     },
     {
-      title: "Contact / Support",
+      title: "Contact / Help",
       subtitle: "Get Help & Support",
       icon: <FaComments />,
-      path: "/patient/contact",
+      path: "/patient/support",
     },
   ]
 
   return (
     <>
-      <Header user={patient} role="patient" />
+      <Header role="patient" />
       <div className="dashboard-container">
         <Sidebar role="patient" active="dashboard" />
         <main className="dashboard-content">
-          <h2 className="page-title mb-8">Welcome, {patient?.fullname? `${patient.fullname}` : ""}</h2>
-
+          <h2 className="page-title mb-8">Welcome, {patient?.fullname ? `${patient.fullname}` : ""}</h2>
           <motion.div
             className="patient-dashboard-grid"
             initial="hidden"

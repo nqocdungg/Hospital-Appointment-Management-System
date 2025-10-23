@@ -3,36 +3,54 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import Header from "../../components/Header"
 import Sidebar from "../../components/Sidebar"
-import { FaEye, FaSort, FaEdit, FaTimes } from "react-icons/fa"
-import AppointmentEditModal from "./AppointmentEditModal"
-import AppointmentViewModal from "./AppointmentViewModal"
+import { FaEye, FaSort } from "react-icons/fa"
 
 export default function AppointmentList() {
   const [appointments, setAppointments] = useState([])
   const [q, setQ] = useState("")
+  const [doctorId, setDoctorId] = useState("")
   const [status, setStatus] = useState("")
   const [dateFrom, setDateFrom] = useState("")
   const [dateTo, setDateTo] = useState("")
   const [sortDesc, setSortDesc] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-  const [viewData, setViewData] = useState(null)
-  const [editData, setEditData] = useState(null)
+  const [doctors, setDoctors] = useState([])
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
 
+  const STATUS_MAP = {
+    0: "BOOKED",
+    1: "COMPLETED",
+    2: "CANCELLED",
+    3: "DOCTOR_CANCELLED",
+    4: "ABSENT"
+  }
+
   useEffect(() => {
+    fetchDoctors()
     fetchAppointments()
   }, [sortDesc])
+
+  async function fetchDoctors() {
+    try {
+      const res = await axios.get("http://localhost:5050/api/admin/doctors", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setDoctors(res.data)
+    } catch {
+      setDoctors([])
+    }
+  }
 
   async function fetchAppointments() {
     setLoading(true)
     try {
-      const res = await axios.get("http://localhost:5050/api/doctor/appointments", {
+      const res = await axios.get("http://localhost:5050/api/admin/appointments", {
         headers: { Authorization: `Bearer ${token}` },
-        params: { q, status, dateFrom, dateTo, sort: sortDesc ? "desc" : "asc" },
+        params: { q, doctorId, status, dateFrom, dateTo, sort: sortDesc ? "desc" : "asc" }
       })
-      setAppointments(res.data.items || [])
+      setAppointments(Array.isArray(res.data) ? res.data : [])
     } catch {
       setError("Failed to load appointments.")
     } finally {
@@ -45,18 +63,17 @@ export default function AppointmentList() {
     setTimeout(fetchAppointments, 0)
   }
 
-  const renderStatusText = (statusText) => {
-    const s = statusText.toUpperCase()
+  const renderStatus = s => {
     switch (s) {
-      case "BOOKED":
+      case 0:
         return <span className="status status-booked">BOOKED</span>
-      case "COMPLETED":
+      case 1:
         return <span className="status status-completed">COMPLETED</span>
-      case "CANCELLED":
+      case 2:
         return <span className="status status-cancelled">CANCELLED</span>
-      case "DOCTOR_CANCELLED":
+      case 3:
         return <span className="status status-doctorcancelled">DOCTOR_CANCELLED</span>
-      case "ABSENT":
+      case 4:
         return <span className="status status-absent">ABSENT</span>
       default:
         return <span className="status">UNKNOWN</span>
@@ -68,9 +85,10 @@ export default function AppointmentList() {
 
   return (
     <>
-      <Header title="Appointments" role="doctor" />
+      <Header role="admin" />
+
       <div className="dashboard">
-        <Sidebar role="doctor" />
+        <Sidebar role="admin" />
         <div className="main">
           <div className="page-header">
             <h2 className="page-title">Appointments Management</h2>
@@ -79,7 +97,7 @@ export default function AppointmentList() {
           <div className="filter-container">
             <div className="filter-row">
               <div className="filter-group">
-                <label>Search Patient</label>
+                <label>Search (Patient or Doctor)</label>
                 <input
                   type="text"
                   placeholder="Enter name..."
@@ -87,6 +105,15 @@ export default function AppointmentList() {
                   onChange={e => setQ(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && fetchAppointments()}
                 />
+              </div>
+              <div className="filter-group small">
+                <label>Doctor</label>
+                <select value={doctorId} onChange={e => setDoctorId(e.target.value)}>
+                  <option value="">All</option>
+                  {doctors.map(d => (
+                    <option key={d.id} value={d.id}>{d.user?.fullname}</option>
+                  ))}
+                </select>
               </div>
               <div className="filter-group small">
                 <label>Status</label>
@@ -109,9 +136,7 @@ export default function AppointmentList() {
               </div>
               <div className="filter-actions">
                 <button className="btn" onClick={fetchAppointments}>Filter</button>
-                <button className="btn-outline" onClick={toggleSort}>
-                  <FaSort /> {sortDesc ? "Sort Desc" : "Sort Asc"}
-                </button>
+                <button className="btn-outline" onClick={toggleSort}><FaSort /> {sortDesc ? "Sort Desc" : "Sort Asc"}</button>
               </div>
             </div>
           </div>
@@ -122,10 +147,10 @@ export default function AppointmentList() {
                 <th>ID</th>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Doctor</th>
                 <th>Patient</th>
-                <th>Phone</th>
                 <th>Status</th>
-                <th width="160">Action</th>
+                <th width="100">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -137,33 +162,12 @@ export default function AppointmentList() {
                     <td>{a.id}</td>
                     <td>{a.date ? a.date.slice(0, 10) : "-"}</td>
                     <td>{a.shift ? `${a.shift.startTime} - ${a.shift.endTime}` : "-"}</td>
-                    <td>{a.patient?.fullname || "-"}</td>
-                    <td>{a.patient?.phone || "-"}</td>
-                    <td>{renderStatusText(a.status)}</td>
+                    <td>{a.doctorName || "-"}</td>
+                    <td>{a.patientName || "-"}</td>
+                    <td>{renderStatus(a.status)}</td>
                     <td>
-                      <button className="btn-view" onClick={() => setViewData(a)}>
+                      <button className="btn-view" onClick={() => navigate(`/admin/appointments/${a.id}`)}>
                         <FaEye title="View" />
-                      </button>
-                      <button className="btn-edit" onClick={() => setEditData(a)}>
-                        <FaEdit title="Edit" />
-                      </button>
-                      <button
-                        className="btn-cancel"
-                        onClick={async () => {
-                          if (!window.confirm("Are you sure to cancel this appointment?")) return
-                          try {
-                            await axios.put(
-                              `http://localhost:5050/api/doctor/appointments/${a.id}/cancel`,
-                              {},
-                              { headers: { Authorization: `Bearer ${token}` } }
-                            )
-                            fetchAppointments()
-                          } catch {
-                            alert("Failed to cancel appointment.")
-                          }
-                        }}
-                      >
-                        <FaTimes title="Cancel" />
                       </button>
                     </td>
                   </tr>
@@ -173,19 +177,6 @@ export default function AppointmentList() {
           </table>
         </div>
       </div>
-      {viewData && (
-        <AppointmentViewModal
-          data={viewData}
-          onClose={() => setViewData(null)}
-        />
-      )}
-      {editData && (
-        <AppointmentEditModal
-          data={editData}
-          onClose={() => setEditData(null)}
-          onSave={fetchAppointments}
-        />
-      )}
     </>
   )
 }

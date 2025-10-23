@@ -48,7 +48,8 @@ export default function DepartmentList() {
 
   return (
     <>
-      <Header />
+      <Header role="admin" />
+
       <div className="dashboard-container">
         <Sidebar role="admin" />
         <main className="dashboard-content">

@@ -45,7 +45,7 @@ export default function ViewAppointments() {
 
   return (
     <>
-      <Header user={patient} role="patient" />
+      <Header role="patient" />
       <div className="dashboard-container">
         <Sidebar role="patient" />
         <main className="dashboard-content">

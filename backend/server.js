@@ -9,10 +9,15 @@ import adminPatientRoutes from "./routes/admin/patientRoutes.js"
 import adminDepartmentRoutes from "./routes/admin/departmentRoutes.js"
 import adminScheduleRoutes from "./routes/admin/scheduleRoutes.js"
 import authRoutes from "./routes/authRoutes.js"
-import patientViewDoctorRoutes from "./routes/patient/viewdoctorRoutes.js"
 import patientAppointmentRoutes from "./routes/patient/appointmentRoutes.js"
-import patientRecordRoutes from "./routes/patient/recordRoutes.js"
+import patientMedicalRecordRoutes from "./routes/patient/medicalRecordRoutes.js"
 import doctorAppointmentRoutes from "./routes/doctor/viewappointmentRoutes.js"
+import doctorMedicalRecordRoutes from "./routes/doctor/medicalRecordRoutes.js"
+import doctorPatientRoutes from "./routes/doctor/patientRoutes.js"
+import doctorScheduleRoutes from "./routes/doctor/doctorScheduleRoutes.js"
+import adminAppointmentRoutes from "./routes/admin/appointmentRoutes.js"
+import viewDoctorRoutes from "./routes/patient/viewDoctorRoutes.js"
+import doctorDashboardRoutes from "./routes/doctor/dashboardRoutes.js"
 
 const app = express()
 const PORT = process.env.PORT || 5050
@@ -26,29 +31,31 @@ app.use(cors({
 }))
 
 app.use(express.json())
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")))
 
-// Admin routes
 app.use("/api/auth", authRoutes)
 app.use("/api/admin/dashboard", adminDashboardRoutes)
 app.use("/api/admin/doctors", adminDoctorRoutes)
 app.use("/api/admin/patients", adminPatientRoutes)
 app.use("/api/admin/departments", adminDepartmentRoutes)
 app.use("/api/admin/schedules", adminScheduleRoutes)
+app.use("/api/admin/appointments", adminAppointmentRoutes)
 
-// Patient routes
-app.use("/api/patient", patientViewDoctorRoutes)
 app.use("/api/patient/appointments", patientAppointmentRoutes)
-app.use("/api/patient/records", patientRecordRoutes)
+app.use("/api/patient/medical-records", patientMedicalRecordRoutes)
+app.use("/api/patient/view-doctor", viewDoctorRoutes)
 
-// Doctor routes
 app.use("/api/doctor/appointments", doctorAppointmentRoutes)
+app.use("/api/doctor/medical-records", doctorMedicalRecordRoutes)
+app.use("/api/doctor/patients", doctorPatientRoutes)
+app.use("/api/doctor/schedules", doctorScheduleRoutes)
+app.use("/api/doctor/dashboard", doctorDashboardRoutes)
 
-// Serve frontend
 app.use(express.static(path.join(__dirname, "../frontend/dist")))
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../frontend/dist", "index.html"))
 })
 
 app.listen(PORT, () => {
-  console.log(`✅ Server has started on port ${PORT}`)
+  console.log(`Server has started on port ${PORT}`)
 })

@@ -67,7 +67,8 @@ export default function DepartmentForm({ mode = "add" }) {
 
   return (
     <>
-      <Header />
+      <Header role="admin" />
+
       <div className="dashboard-container">
         <Sidebar role="admin" />
         <main className="dashboard-content">

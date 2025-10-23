@@ -49,11 +49,9 @@ export default function Authentication({ mode = "login", onSuccess }) {
           password: form.password,
         })
 
-        // ✅ Lưu token và vai trò
         localStorage.setItem("token", res.data.token)
         localStorage.setItem("role", res.data.role)
 
-        // ✅ Lưu thông tin user tương ứng vai trò
         if (res.data.role === "patient") {
           localStorage.setItem("patient", JSON.stringify(res.data.user))
         } else {

@@ -137,7 +137,7 @@ export default function ScheduleList() {
 
   return (
     <>
-      <Header />
+      <Header role = "admin"/>
       <div className="dashboard-container">
         <Sidebar role="admin" />
         <main className="dashboard-content">
@@ -148,7 +148,6 @@ export default function ScheduleList() {
             </button>
           </div>
 
-          {/* === New Filter Toolbar === */}
           <div className="filter-container">
             <div className="filter-row">
               <div className="filter-group">
@@ -203,7 +202,6 @@ export default function ScheduleList() {
             </div>
           </div>
 
-          {/* === Table === */}
           <table className="data-table">
             <thead>
               <tr>
@@ -264,7 +262,6 @@ export default function ScheduleList() {
             </tbody>
           </table>
 
-          {/* === Modal Add Schedule === */}
           {openAdd && (
             <div className="modal">
               <div className="modal-body">

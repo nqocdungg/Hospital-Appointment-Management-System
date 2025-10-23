@@ -13,7 +13,11 @@ export default function AppointmentBooking() {
   const patient = JSON.parse(localStorage.getItem("patient")) || { fullname: "Patient" }
 
   useEffect(() => {
-    axios.get("http://localhost:5050/api/patient/specialties", { headers: { Authorization: `Bearer ${token}` } }).then(res => setSpecialties(Array.isArray(res.data) ? res.data : [])).catch(() => setSpecialties([]))
+    axios.get("http://localhost:5050/api/patient/appointments/specialties", {
+      headers: { Authorization: `Bearer ${token}`, "Cache-Control": "no-cache" }
+    })
+    .then(res => setSpecialties(Array.isArray(res.data) ? res.data : []))
+    .catch(() => setSpecialties([]))
   }, [])
 
   useEffect(() => {
@@ -23,43 +27,62 @@ export default function AppointmentBooking() {
 
   useEffect(() => {
     if (!form.specialtyId) return
-    axios.get(`http://localhost:5050/api/patient/doctors?specialtyId=${form.specialtyId}`, { headers: { Authorization: `Bearer ${token}` } }).then(res => setDoctors(Array.isArray(res.data) ? res.data : [])).catch(() => setDoctors([]))
+    axios.get(`http://localhost:5050/api/patient/appointments/doctors?specialtyId=${form.specialtyId}`, {
+      headers: { Authorization: `Bearer ${token}`, "Cache-Control": "no-cache" }
+    })
+    .then(res => setDoctors(Array.isArray(res.data) ? res.data : []))
+    .catch(() => setDoctors([]))
   }, [form.specialtyId])
 
   useEffect(() => {
     setForm(prev => ({ ...prev, date: "", shiftId: "" }))
     setAvailableDates([]); setSchedules([])
     if (!form.doctorId) return
-    axios.get(`http://localhost:5050/api/patient/appointments/available-dates?doctorId=${form.doctorId}`, { headers: { Authorization: `Bearer ${token}` } }).then(res => {
+    axios.get(`http://localhost:5050/api/patient/appointments/available-dates?doctorId=${form.doctorId}`, {
+      headers: { Authorization: `Bearer ${token}`, "Cache-Control": "no-cache" }
+    })
+    .then(res => {
       const today = new Date(); today.setHours(0,0,0,0)
       const keep = (Array.isArray(res.data) ? res.data : []).filter(d => new Date(d).getTime() >= today.getTime())
       setAvailableDates(keep)
-    }).catch(() => setAvailableDates([]))
+    })
+    .catch(() => setAvailableDates([]))
   }, [form.doctorId])
 
   useEffect(() => {
     setForm(prev => ({ ...prev, shiftId: "" }))
     setSchedules([])
     if (!form.doctorId || !form.date) return
-    axios.get(`http://localhost:5050/api/patient/appointments/schedules?doctorId=${form.doctorId}&date=${form.date}`, { headers: { Authorization: `Bearer ${token}` } }).then(res => setSchedules(Array.isArray(res.data) ? res.data : [])).catch(() => setSchedules([]))
+    axios.get(`http://localhost:5050/api/patient/appointments/schedules?doctorId=${form.doctorId}&date=${form.date}`, {
+      headers: { Authorization: `Bearer ${token}`, "Cache-Control": "no-cache" }
+    })
+    .then(res => setSchedules(Array.isArray(res.data) ? res.data : []))
+    .catch(() => setSchedules([]))
   }, [form.doctorId, form.date])
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
 
   const handleBook = async () => {
     const { specialtyId, doctorId, date, shiftId, symptom } = form
-    if (!specialtyId || !doctorId || !date || !shiftId || !symptom.trim()) { alert("Please fill in all required fields (Symptom is required)."); return }
+    if (!specialtyId || !doctorId || !date || !shiftId || !symptom.trim()) {
+      alert("Please fill in all required fields (Symptom is required).")
+      return
+    }
     try {
-      await axios.post("http://localhost:5050/api/patient/appointments", form, { headers: { Authorization: `Bearer ${token}` } })
+      await axios.post("http://localhost:5050/api/patient/appointments", form, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       alert("Appointment booked successfully!")
       setForm({ specialtyId: "", doctorId: "", date: "", shiftId: "", symptom: "", request: "" })
       setDoctors([]); setSchedules([]); setAvailableDates([])
-    } catch { alert("Failed to book appointment.") }
+    } catch {
+      alert("Failed to book appointment.")
+    }
   }
 
   return (
     <>
-      <Header user={patient} role="patient" />
+      <Header role="patient" />
       <div className="dashboard-container">
         <Sidebar role="patient" />
         <main className="dashboard-content">
@@ -85,7 +108,11 @@ export default function AppointmentBooking() {
                 <div className="date-list">
                   {availableDates.length === 0 && <p className="no-date">No available dates.</p>}
                   {availableDates.map(d => (
-                    <button key={d} type="button" className={`date-btn ${form.date === d ? "selected" : ""}`} onClick={() => setForm({ ...form, date: d })}>{new Date(d).toLocaleDateString("en-GB")}</button>
+                    <button key={d} type="button"
+                      className={`date-btn ${form.date === d ? "selected" : ""}`}
+                      onClick={() => setForm({ ...form, date: d })}>
+                      {new Date(d).toLocaleDateString("en-GB")}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -93,7 +120,11 @@ export default function AppointmentBooking() {
                 <label>Shift</label>
                 <select name="shiftId" value={form.shiftId} onChange={handleChange} disabled={!form.date}>
                   <option value="">-- Select Shift --</option>
-                  {schedules.map(sh => <option key={sh.shiftId} value={sh.shiftId}>{sh.shiftName}</option>)}
+                  {schedules.map(sh => (
+                    <option key={sh.shiftId} value={sh.shiftId}>
+                      {`Shift ${sh.shiftId} (${sh.startTime} - ${sh.endTime})`}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="form-group full-width">

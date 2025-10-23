@@ -17,31 +17,27 @@ export default function Sidebar({ role = "admin" }) {
 
   const adminMenu = [
     { label: "Dashboard", icon: <FaTachometerAlt />, path: "/admin/dashboard" },
-    { label: "Doctors", icon: <FaUserMd />, path: "/admin/doctors" },
-    { label: "Patients", icon: <FaUsers />, path: "/admin/patients" },
-    { label: "Departments", icon: <FaHospitalSymbol />, path: "/admin/departments" },
+    { label: "Doctors List", icon: <FaUserMd />, path: "/admin/doctors" },
+    { label: "Patients List", icon: <FaUsers />, path: "/admin/patients" },
     { label: "Work Schedules", icon: <FaCalendarAlt />, path: "/admin/schedules" },
-    { label: "Appointments", icon: <FaClipboardList />, path: "/admin/appointments" },
-    { label: "Reports", icon: <FaChartBar />, path: "/admin/reports" },
-    { label: "Settings", icon: <FaCog />, path: "/admin/settings" },
+    { label: "View Departments", icon: <FaHospitalSymbol />, path: "/admin/departments" },
+    { label: "View Appointments", icon: <FaClipboardList />, path: "/admin/appointments" },
   ]
 
   const doctorMenu = [
     { label: "Dashboard", icon: <FaTachometerAlt />, path: "/doctor/dashboard" },
     { label: "My Appointments", icon: <FaClipboardList />, path: "/doctor/appointments" },
-    { label: "My Schedule", icon: <FaCalendarAlt />, path: "/doctor/schedule" },
+    { label: "My Schedule", icon: <FaCalendarAlt />, path: "/doctor/schedules" },
     { label: "My Patients", icon: <FaUsers />, path: "/doctor/patients" },
-    { label: "Reports", icon: <FaChartBar />, path: "/doctor/reports" },
   ]
 
   const patientMenu = [
     { label: "Dashboard", icon: <FaTachometerAlt />, path: "/patient/home" },
     { label: "Book Appointment", icon: <FaCalendarAlt />, path: "/patient/book-appointments" },
     { label: "My Appointments", icon: <FaClipboardList />, path: "/patient/view-my-appointments" },
-    { label: "Doctors", icon: <FaUserMd />, path: "/patient/doctors" },
-    { label: "Departments", icon: <FaHospitalSymbol />, path: "/patient/departments" },
-    { label: "Medical Records", icon: <FaFileMedical />, path: "/patient/records" },
-    { label: "Support", icon: <FaComments />, path: "/patient/contact" },
+    { label: "View Doctors", icon: <FaUserMd />, path: "/patient/view-doctor" },
+    { label: "Medical Records", icon: <FaFileMedical />, path: "/patient/medical-records" },
+    { label: "Contact / Help", icon: <FaComments />, path: "/patient/support" },
   ]
 
   const menuItems =
