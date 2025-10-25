@@ -27,6 +27,19 @@ It enables hospitals to efficiently handle **doctor schedules**, **appointment b
 
 ---
 
+## 🧩 Database Design (ERD & Schema Diagram)
+
+The following diagram illustrates the **database structure and relationships** used in the Hospital Appointment Management System.
+
+<p align="center">
+  <img src="./docs/demo/ERD.drawio.png" width="800" alt="ERD Diagram" />
+</p>
+<p align="center">
+  <img src="./docs/demo/csdl.drawio.png" width="800" alt="Schema Diagram" />
+</p>
+
+---
+
 ## 🖼️ DEMO
 
 ### 👩‍💼 **Admin Interface**
